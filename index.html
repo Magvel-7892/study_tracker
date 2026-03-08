@@ -1,329 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>📖 Classroom</title>
-  <link rel="manifest" href="#" />
-  <meta name="theme-color" content="#0A0A14" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Sora', sans-serif; background: #0F0F1A; color: #E8E8F4; min-height: 100vh; }
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
-    .pill-btn { border: none; border-radius: 999px; padding: 8px 18px; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.18s; }
-    .pill-btn:active { filter: brightness(1.2); transform: scale(0.97); }
-    .card { background: #181828; border-radius: 16px; border: 1px solid #252540; }
-    input, textarea, select {
-      background: #1E1E32; border: 1px solid #2E2E4A; border-radius: 10px;
-      color: #E8E8F4; font-family: inherit; font-size: 14px; padding: 10px 14px;
-      width: 100%; outline: none; transition: border 0.2s;
-    }
-    input:focus, textarea:focus, select:focus { border-color: #6C63FF; }
-    textarea { resize: vertical; min-height: 60px; }
-    .tab { padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; background: transparent; color: #888; font-family: inherit; transition: all 0.18s; }
-    .tab.active { background: #252540; color: #E8E8F4; }
-    .res-card { background: #181828; border: 1px solid #252540; border-radius: 14px; padding: 16px 18px; transition: border 0.2s; }
-    .status-badge { border-radius: 999px; padding: 6px 12px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.15s; text-align: left; }
-    .progress-bar-bg { background: #252540; border-radius: 999px; height: 6px; overflow: hidden; }
-    .progress-bar-fill { height: 100%; border-radius: 999px; transition: width 0.5s ease; }
-    .fade-in { animation: fadeIn 0.3s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-    .nav { background: #0A0A14; border-bottom: 1px solid #1E1E32; padding: 0 16px; display: flex; align-items: center; gap: 10px; height: 58px; position: sticky; top: 0; z-index: 100; overflow-x: auto; }
-    .nav::-webkit-scrollbar { display: none; }
-    .main { max-width: 800px; margin: 0 auto; padding: 24px 16px; }
-    .form-grid { display: grid; gap: 12px; }
-    .hidden { display: none; }
-    .grid-gap { display: grid; gap: 12px; }
-    .grid-gap-14 { display: grid; gap: 14px; }
-    .flex-row { display: flex; gap: 10px; align-items: center; }
-    .tag { font-size: 12px; background: #252540; border-radius: 6px; padding: 2px 8px; color: #aaa; }
-    .date-tag { font-size: 12px; color: #555; }
-    .link-btn { font-size: 12px; color: #6C63FF; text-decoration: none; }
-    .status-col { display: flex; flex-direction: column; gap: 5px; min-width: 108px; }
-    .avatar-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
-    .empty-msg { color: #555; text-align: center; padding: 40px; }
-    .ann-row { display: flex; gap: 12px; align-items: flex-start; }
-    .section-label { font-size: 12px; font-weight: 700; color: #6C63FF; margin-bottom: 8px; letter-spacing: 1px; }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeTrack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div id="root"></div>
+  <!-- Loading Spinner -->
+  <div id="loading">
+    <div class="spinner"></div>
+    <p>Loading CodeTrack...</p>
+  </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script>
-const { useState, createElement: h } = React;
+  <!-- Auth View -->
+  <div id="auth-view" class="hidden">
+    <div class="auth-wrapper">
+      <div class="auth-card">
+        <div class="auth-header">
+          <div class="logo">&lt;/&gt;</div>
+          <h1>CodeTrack</h1>
+          <p>Engineering Lab &bull; Progress Tracker</p>
+        </div>
 
-const STUDENTS = [
-  { id: 1, name: "Aisha K.", avatar: "AK", color: "#6C63FF" },
-  { id: 2, name: "Ben O.",   avatar: "BO", color: "#FF6584" },
-  { id: 3, name: "Clara M.", avatar: "CM", color: "#43B89C" },
-  { id: 4, name: "Dev P.",   avatar: "DP", color: "#F9A825" },
-  { id: 5, name: "Elena R.", avatar: "ER", color: "#EF5350" },
-];
+        <!-- Login Form -->
+        <form id="login-form" onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label for="login-username">Username</label>
+            <input type="text" id="login-username" placeholder="Enter your username" required>
+          </div>
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" placeholder="Enter your password" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+          <p class="auth-switch">Don't have an account? <a href="#" onclick="toggleAuthForm(event)">Register</a></p>
+          <div style="border-top:1px solid var(--border);margin-top:20px;padding-top:16px;text-align:center">
+            <p style="font-size:12px;color:var(--text-secondary);margin-bottom:10px">Preview mode (no Firebase needed)</p>
+            <div style="display:flex;gap:8px">
+              <button type="button" class="btn btn-outline btn-full" onclick="startPreview('teacher')">Preview as Teacher</button>
+              <button type="button" class="btn btn-outline btn-full" onclick="startPreview('student')">Preview as Student</button>
+            </div>
+          </div>
+        </form>
 
-const RESOURCE_TYPES = ["📄 PDF","🎥 Video","🔗 Link","📝 Note","📚 Reading"];
-const STATUS        = ["Not Started","In Progress","Done"];
-const STATUS_COLORS = { "Not Started":"#888","In Progress":"#F9A825","Done":"#43B89C" };
-const STATUS_ICONS  = { "Not Started":"○","In Progress":"◑","Done":"●" };
+        <!-- Register Form -->
+        <form id="register-form" class="hidden" onsubmit="handleRegister(event)">
+          <div class="form-group">
+            <label for="reg-username">Username</label>
+            <input type="text" id="reg-username" placeholder="Choose a username" required>
+          </div>
+          <div class="form-group">
+            <label for="reg-password">Password</label>
+            <input type="password" id="reg-password" placeholder="Choose a password (min 6 chars)" required minlength="6">
+          </div>
+          <div class="form-group">
+            <label for="reg-teacher-code">Teacher Code <span class="text-muted">(leave blank if student)</span></label>
+            <input type="text" id="reg-teacher-code" placeholder="Enter teacher code if you are the teacher">
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+          <p class="auth-switch">Already have an account? <a href="#" onclick="toggleAuthForm(event)">Sign In</a></p>
+        </form>
+      </div>
+    </div>
+  </div>
 
-const INIT_RESOURCES = [
-  { id:1, title:"Chapter 1: Introduction", type:"📚 Reading", url:"", note:"Read pages 1–24 before Thursday.", date:"2026-03-01" },
-  { id:2, title:"Lecture Recording – Week 1", type:"🎥 Video", url:"https://youtube.com", note:"", date:"2026-03-03" },
-];
+  <!-- Main App View -->
+  <div id="app-view" class="hidden">
+    <!-- Sidebar -->
+    <nav id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-sm">&lt;/&gt;</div>
+        <h2>CodeTrack</h2>
+      </div>
+      <div class="user-badge" id="user-badge"></div>
+      <ul id="nav-links"></ul>
+      <button class="btn btn-logout" onclick="handleLogout()">Sign Out</button>
+    </nav>
 
-function initProgress(resources) {
-  const p = {};
-  STUDENTS.forEach(s => { p[s.id]={}; resources.forEach(r => { p[s.id][r.id]="Not Started"; }); });
-  return p;
-}
+    <!-- Mobile Header -->
+    <div id="mobile-header" class="hidden">
+      <button class="hamburger" onclick="toggleSidebar()">&#9776;</button>
+      <span>CodeTrack</span>
+      <button class="btn-sm" onclick="handleLogout()">Sign Out</button>
+    </div>
 
-function App() {
-  const [view,          setView]          = useState("teacher");
-  const [resources,     setResources]     = useState(INIT_RESOURCES);
-  const [progress,      setProgress]      = useState(() => initProgress(INIT_RESOURCES));
-  const [showForm,      setShowForm]      = useState(false);
-  const [form,          setForm]          = useState({ title:"", type:RESOURCE_TYPES[0], url:"", note:"" });
-  const [announcements, setAnnouncements] = useState(["Welcome to the classroom! Resources will be posted here."]);
-  const [annInput,      setAnnInput]      = useState("");
-  const [activeTab,     setActiveTab]     = useState("resources");
+    <!-- Main Content -->
+    <main id="main-content">
+      <div id="content-area"></div>
+    </main>
+  </div>
 
-  const addResource = () => {
-    if (!form.title.trim()) return;
-    const r = { ...form, id: Date.now(), date: new Date().toISOString().slice(0,10) };
-    setResources(p => [r, ...p]);
-    setProgress(p => {
-      const u = { ...p };
-      STUDENTS.forEach(s => { u[s.id] = { ...u[s.id], [r.id]:"Not Started" }; });
-      return u;
-    });
-    setForm({ title:"", type:RESOURCE_TYPES[0], url:"", note:"" });
-    setShowForm(false);
-  };
+  <!-- Notification Toast -->
+  <div id="toast" class="hidden"></div>
 
-  const deleteResource = id => setResources(p => p.filter(r => r.id !== id));
+  <!-- Modal Overlay -->
+  <div id="modal-overlay" class="hidden" onclick="closeModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 id="modal-title"></h3>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div id="modal-body"></div>
+    </div>
+  </div>
 
-  const updateProgress = (sid, rid, st) =>
-    setProgress(p => ({ ...p, [sid]: { ...p[sid], [rid]: st } }));
-
-  const postAnnouncement = () => {
-    if (!annInput.trim()) return;
-    setAnnouncements(p => [annInput, ...p]);
-    setAnnInput("");
-  };
-
-  const stats = sid => {
-    const s = progress[sid] || {};
-    const vals = Object.values(s);
-    const total = resources.length;
-    const done = vals.filter(v=>v==="Done").length;
-    const inProg = vals.filter(v=>v==="In Progress").length;
-    return { total, done, inProg, pct: total ? Math.round(done/total*100) : 0 };
-  };
-
-  const currentStudent = STUDENTS.find(s => s.id === view);
-
-  // ── NAV ──
-  const nav = h('div', { className:'nav' },
-    h('div', { style:{ fontSize:18, fontWeight:700, whiteSpace:'nowrap', marginRight:4 } },
-      '📖 ', h('span',{style:{color:'#6C63FF'}},'Class'), 'room'
-    ),
-    h('div', { style:{ display:'flex', gap:4 } },
-      h('button', {
-        className:'pill-btn',
-        onClick: ()=>setView("teacher"),
-        style:{ background: view==="teacher"?"#6C63FF":"#1E1E32", color: view==="teacher"?"#fff":"#aaa" }
-      }, '👩‍🏫 Teacher'),
-      ...STUDENTS.map(s => h('button', {
-        key:s.id, className:'pill-btn',
-        onClick: ()=>setView(s.id),
-        style:{ background: view===s.id?s.color:"#1E1E32", color: view===s.id?"#fff":"#aaa" }
-      }, s.avatar))
-    )
-  );
-
-  // ── TEACHER VIEW ──
-  const teacherView = h('div', { className:'fade-in' },
-    h('div', { style:{ marginBottom:24 } },
-      h('h1', { style:{ fontSize:24, fontWeight:700, letterSpacing:-0.5 } }, 'Teacher Dashboard'),
-      h('p',  { style:{ color:'#666', fontSize:14, marginTop:4 } }, 'Manage resources & track student progress')
-    ),
-
-    // Tabs
-    h('div', { style:{ display:'flex', gap:4, marginBottom:22, background:'#141422', borderRadius:10, padding:4, width:'fit-content' } },
-      ...["resources","progress","announcements"].map(t =>
-        h('button', { key:t, className:`tab${activeTab===t?' active':''}`, onClick:()=>setActiveTab(t) },
-          t==="resources"?"📂 Resources": t==="progress"?"📊 Progress":"📣 Announce"
-        )
-      )
-    ),
-
-    // Resources tab
-    activeTab==="resources" && h('div', null,
-      h('div', { style:{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16 } },
-        h('span', { style:{ fontWeight:600, fontSize:15 } }, `${resources.length} resource${resources.length!==1?'s':''} posted`),
-        h('button', { className:'pill-btn', onClick:()=>setShowForm(!showForm), style:{ background:'#6C63FF', color:'#fff' } },
-          showForm ? '✕ Cancel' : '+ Add Resource'
-        )
-      ),
-      showForm && h('div', { className:'card fade-in', style:{ padding:20, marginBottom:18 } },
-        h('div', { className:'form-grid' },
-          h('input', { placeholder:'Resource title *', value:form.title, onChange:e=>setForm(f=>({...f,title:e.target.value})) }),
-          h('select', { value:form.type, onChange:e=>setForm(f=>({...f,type:e.target.value})) },
-            ...RESOURCE_TYPES.map(t => h('option',{key:t},t))
-          ),
-          h('input', { placeholder:'URL (optional)', value:form.url, onChange:e=>setForm(f=>({...f,url:e.target.value})) }),
-          h('textarea', { placeholder:'Notes for students (optional)', value:form.note, onChange:e=>setForm(f=>({...f,note:e.target.value})) }),
-          h('button', { className:'pill-btn', onClick:addResource, style:{ background:'#6C63FF', color:'#fff', width:'auto', justifySelf:'end' } }, 'Post Resource')
-        )
-      ),
-      h('div', { className:'grid-gap' },
-        resources.length===0 && h('div',{className:'empty-msg'},'No resources yet. Add your first one!'),
-        ...resources.map(r => h('div',{key:r.id, className:'res-card fade-in'},
-          h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}},
-            h('div',{style:{flex:1}},
-              h('div',{style:{display:'flex',gap:8,marginBottom:4}},
-                h('span',{className:'tag'},r.type),
-                h('span',{className:'date-tag'},r.date)
-              ),
-              h('div',{style:{fontWeight:600,fontSize:15,marginBottom:4}},r.title),
-              r.note && h('div',{style:{fontSize:13,color:'#888'}},r.note),
-              r.url  && h('a',{href:r.url,target:'_blank',rel:'noreferrer',className:'link-btn'},'🔗 Open link')
-            ),
-            h('button',{onClick:()=>deleteResource(r.id),style:{background:'none',border:'none',color:'#444',cursor:'pointer',fontSize:16,padding:4,marginLeft:8}},'🗑')
-          ),
-          h('div',{style:{display:'flex',gap:6,marginTop:12,flexWrap:'wrap'}},
-            ...STUDENTS.map(s => {
-              const st = progress[s.id]?.[r.id]||"Not Started";
-              return h('div',{
-                key:s.id, className:'avatar-dot',
-                title:`${s.name}: ${st}`,
-                style:{
-                  background:s.color+'22',
-                  border:`2px solid ${st==="Done"?s.color:st==="In Progress"?"#F9A825":"#333"}`,
-                  color:s.color
-                }
-              }, s.avatar[0]);
-            })
-          )
-        ))
-      )
-    ),
-
-    // Progress tab
-    activeTab==="progress" && h('div',{className:'grid-gap-14'},
-      ...STUDENTS.map(s => {
-        const st = stats(s.id);
-        return h('div',{key:s.id,className:'card',style:{padding:18}},
-          h('div',{style:{display:'flex',alignItems:'center',gap:12,marginBottom:12}},
-            h('div',{style:{width:40,height:40,borderRadius:'50%',background:s.color+'22',border:`2px solid ${s.color}`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:13,fontWeight:700,color:s.color}},s.avatar),
-            h('div',{style:{flex:1}},
-              h('div',{style:{fontWeight:600}},s.name),
-              h('div',{style:{fontSize:12,color:'#666'}},`${st.done}/${st.total} done · ${st.inProg} in progress`)
-            ),
-            h('div',{style:{fontSize:22,fontWeight:700,color:s.color}},`${st.pct}%`)
-          ),
-          h('div',{className:'progress-bar-bg'},
-            h('div',{className:'progress-bar-fill',style:{width:`${st.pct}%`,background:s.color}})
-          ),
-          h('div',{style:{display:'grid',gap:6,marginTop:12}},
-            ...resources.map(r => h('div',{key:r.id,style:{display:'flex',justifyContent:'space-between',alignItems:'center',fontSize:13}},
-              h('span',{style:{color:'#aaa',flex:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',marginRight:10}},`${r.type} ${r.title}`),
-              h('span',{style:{color:STATUS_COLORS[progress[s.id]?.[r.id]],fontSize:12,whiteSpace:'nowrap'}},
-                `${STATUS_ICONS[progress[s.id]?.[r.id]]} ${progress[s.id]?.[r.id]}`
-              )
-            ))
-          )
-        );
-      })
-    ),
-
-    // Announcements tab
-    activeTab==="announcements" && h('div',null,
-      h('div',{className:'flex-row',style:{marginBottom:20}},
-        h('input',{placeholder:'Post an announcement...', value:annInput, onChange:e=>setAnnInput(e.target.value),
-          onKeyDown:e=>e.key==='Enter'&&postAnnouncement()}),
-        h('button',{className:'pill-btn',onClick:postAnnouncement,style:{background:'#6C63FF',color:'#fff',whiteSpace:'nowrap'}},'Post')
-      ),
-      h('div',{className:'grid-gap'},
-        ...announcements.map((a,i)=>h('div',{key:i,className:'card',style:{padding:'14px 18px'}},
-          h('div',{className:'ann-row'},
-            h('span',{style:{fontSize:18}},'📣'),
-            h('p',{style:{fontSize:14,color:'#ccc',lineHeight:1.5}},a)
-          )
-        ))
-      )
-    )
-  );
-
-  // ── STUDENT VIEW ──
-  const studentView = currentStudent && h('div',{className:'fade-in'},
-    h('div',{style:{display:'flex',alignItems:'center',gap:14,marginBottom:24}},
-      h('div',{style:{width:52,height:52,borderRadius:'50%',background:currentStudent.color+'22',border:`2px solid ${currentStudent.color}`,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,fontSize:15,color:currentStudent.color}},
-        currentStudent.avatar
-      ),
-      h('div',null,
-        h('h1',{style:{fontSize:22,fontWeight:700,letterSpacing:-0.5}},currentStudent.name),
-        h('div',{style:{fontSize:13,color:'#666'}},`${stats(currentStudent.id).done}/${resources.length} resources completed`)
-      ),
-      h('div',{style:{marginLeft:'auto',fontSize:26,fontWeight:700,color:currentStudent.color}},`${stats(currentStudent.id).pct}%`)
-    ),
-    h('div',{className:'progress-bar-bg',style:{marginBottom:24,height:8}},
-      h('div',{className:'progress-bar-fill',style:{width:`${stats(currentStudent.id).pct}%`,background:currentStudent.color}})
-    ),
-    announcements.length>0 && h('div',{className:'card',style:{padding:16,marginBottom:22,borderLeft:'3px solid #6C63FF'}},
-      h('div',{className:'section-label'},'LATEST FROM TEACHER'),
-      h('p',{style:{fontSize:14,color:'#ccc',lineHeight:1.5}},announcements[0])
-    ),
-    h('div',{style:{marginBottom:14,fontWeight:600,fontSize:15}},'Your Resources'),
-    h('div',{className:'grid-gap'},
-      resources.length===0 && h('div',{className:'empty-msg'},'No resources posted yet.'),
-      ...resources.map(r => {
-        const st = progress[currentStudent.id]?.[r.id]||"Not Started";
-        return h('div',{key:r.id,className:'res-card',style:{borderLeft:`3px solid ${STATUS_COLORS[st]}`}},
-          h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'flex-start',gap:12}},
-            h('div',{style:{flex:1}},
-              h('div',{style:{display:'flex',gap:8,marginBottom:6}},
-                h('span',{className:'tag'},r.type),
-                h('span',{className:'date-tag'},r.date)
-              ),
-              h('div',{style:{fontWeight:600,fontSize:15,marginBottom:4}},r.title),
-              r.note && h('div',{style:{fontSize:13,color:'#888',marginBottom:6}},r.note),
-              r.url  && h('a',{href:r.url,target:'_blank',rel:'noreferrer',className:'link-btn'},'🔗 Open link')
-            ),
-            h('div',{className:'status-col'},
-              ...STATUS.map(s2 => h('button',{
-                key:s2, className:'status-badge',
-                onClick:()=>updateProgress(currentStudent.id,r.id,s2),
-                style:{
-                  background: st===s2?STATUS_COLORS[s2]+'33':'transparent',
-                  color:       st===s2?STATUS_COLORS[s2]:'#444',
-                  border:     `1.5px solid ${st===s2?STATUS_COLORS[s2]:'#2E2E4A'}`
-                }
-              }, `${STATUS_ICONS[s2]} ${s2}`)
-              )
-            )
-          )
-        );
-      })
-    )
-  );
-
-  return h('div', null,
-    nav,
-    h('div', { className:'main' },
-      view==="teacher" ? teacherView : studentView
-    )
-  );
-}
-
-ReactDOM.createRoot(document.getElementById('root')).render(h(App));
-</script>
+  <!-- Firebase SDK (v9 compat for simplicity) -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
